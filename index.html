@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GridWise | Energy Optimizer</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Inter, Arial, sans-serif;
+            background: #f4f7f6;
+            color: #17211f;
+        }
+
+        .container {
+            width: min(1200px, 92%);
+            margin: auto;
+        }
+
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5ebe8;
+            padding: 20px 0;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: #173f35;
+            color: white;
+            font-size: 20px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #52605c;
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #35a66f;
+        }
+
+        .hero {
+            padding: 45px 0 30px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            line-height: 1.1;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            color: #64716d;
+            font-size: 17px;
+            max-width: 700px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e1e8e5;
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 8px 30px rgba(20, 50, 40, 0.05);
+        }
+
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #42514c;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            border: 1px solid #d8e1dd;
+            border-radius: 10px;
+            padding: 12px 13px;
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 17px;
+            font-family: inherit;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #347b68;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        button {
+            width: 100%;
+            border: none;
+            border-radius: 11px;
+            padding: 14px;
+            background: #173f35;
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #245b4c;
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+            transform: none;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 24px;
+        }
+
+        .metric {
+            background: white;
+            border: 1px solid #e1e8e5;
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .metric-title {
+            color: #6c7874;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 27px;
+            font-weight: 800;
+        }
+
+        .metric-unit {
+            font-size: 13px;
+            color: #77827f;
+            margin-left: 3px;
+        }
+
+        .directive {
+            background: #f0f7f3;
+            border: 1px solid #d7e9df;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .directive-title {
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 7px;
+        }
+
+        .directive-text {
+            font-size: 14px;
+            color: #4f5d58;
+            line-height: 1.5;
+        }
+
+        .chart-card {
+            margin-bottom: 24px;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            position: relative;
+        }
+
+        #energyChart {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #596762;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-grid {
+            background: #173f35;
+        }
+
+        .legend-solar {
+            background: #d49a28;
+        }
+
+        .legend-battery {
+            background: #b05b48;
+        }
+
+        .table-card {
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th,
+        td {
+            padding: 13px 12px;
+            text-align: left;
+            border-bottom: 1px solid #edf1ef;
+            font-size: 13px;
+        }
+
+        th {
+            background: #f7f9f8;
+            color: #52605c;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .charge {
+            color: #28785b;
+            font-weight: 700;
+        }
+
+        .discharge {
+            color: #b05b48;
+            font-weight: 700;
+        }
+
+        .idle {
+            color: #68746f;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #65726d;
+        }
+
+        .error {
+            background: #fff1ef;
+            border: 1px solid #f0c9c2;
+            color: #a34235;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 34px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                padding-top: 30px;
+            }
+
+            .chart-container {
+                height: 240px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="container nav">
+
+        <div class="logo">
+            <div class="logo-icon">⚡</div>
+            GridWise
+        </div>
+
+        <div class="status">
+            <span class="dot"></span>
+            Optimizer Online
+        </div>
+
+    </div>
+</header>
+
+
+<main class="container">
+
+    <section class="hero">
+
+        <h1>Smart Energy Optimization</h1>
+
+        <p>
+            Turn natural-language operator instructions into an optimized
+            24-hour energy schedule using Gemini AI and mathematical optimization.
+        </p>
+
+    </section>
+
+
+    <div id="errorBox" class="error"></div>
+
+
+    <section class="grid">
+
+        <!-- LEFT SIDE -->
+
+        <div class="card">
+
+            <h2>Scenario Configuration</h2>
+
+            <label for="scenario">
+                Scenario ID
+            </label>
+
+            <input
+                id="scenario"
+                value="DEMO-001"
+                type="text"
+            >
+
+
+            <label for="note">
+                Operator Instruction
+            </label>
+
+            <textarea
+                id="note"
+                placeholder="Example: Do not charge the battery from 1 PM to 3 PM."
+            >Do not charge the battery from 1 PM to 3 PM.</textarea>
+
+
+            <button
+                id="optimizeBtn"
+                onclick="optimizeEnergy()"
+            >
+                Optimize Energy Schedule
+            </button>
+
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+
+        <div>
+
+            <!-- METRICS -->
+
+            <div class="metrics">
+
+                <div class="metric">
+
+                    <div class="metric-title">
+                        Total Grid Usage
+                    </div>
+
+                    <div class="metric-value">
+
+                        <span id="totalGrid">
+                            —
+                        </span>
+
+                        <span class="metric-unit">
+                            kWh
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <div class="metric-title">
+                        Total Energy Cost
+                    </div>
+
+                    <div class="metric-value">
+
+                        <span id="totalCost">
+                            —
+                        </span>
+
+                        <span class="metric-unit">
+                            BDT
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <div class="metric-title">
+                        Peak Grid Demand
+                    </div>
+
+                    <div class="metric-value">
+
+                        <span id="peakGrid">
+                            —
+                        </span>
+
+                        <span class="metric-unit">
+                            kWh
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- AI DIRECTIVE -->
+
+            <div class="card directive">
+
+                <div class="directive-title">
+                    AI Directive Interpretation
+                </div>
+
+                <div
+                    id="directiveText"
+                    class="directive-text"
+                >
+                    Run an optimization to see Gemini's interpretation.
+                </div>
+
+            </div>
+
+
+            <!-- CHART -->
+
+            <div class="card chart-card">
+
+                <h2>
+                    Energy Flow Overview
+                </h2>
+
+                <div class="chart-container">
+
+                    <canvas id="energyChart"></canvas>
+
+                </div>
+
+
+                <div class="chart-legend">
+
+                    <div class="legend-item">
+
+                        <span class="legend-dot legend-grid"></span>
+
+                        Grid
+
+                    </div>
+
+
+                    <div class="legend-item">
+
+                        <span class="legend-dot legend-solar"></span>
+
+                        Solar
+
+                    </div>
+
+
+                    <div class="legend-item">
+
+                        <span class="legend-dot legend-battery"></span>
+
+                        Battery
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- TABLE -->
+
+            <div class="card table-card">
+
+                <h2>
+                    24-Hour Energy Plan
+                </h2>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Hour</th>
+
+                                <th>Grid</th>
+
+                                <th>Solar</th>
+
+                                <th>Battery Action</th>
+
+                                <th>Battery</th>
+
+                                <th>Battery Energy</th>
+
+                                <th>Cost</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="planBody">
+
+                            <tr>
+
+                                <td
+                                    colspan="7"
+                                    class="loading"
+                                >
+                                    No optimization result yet.
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+const API_URL =
+    "http://127.0.0.1:8000/optimize-energy";
+
+
+function createHours() {
+
+    const solar = [
+
+        0, 0, 0, 0, 0, 0,
+
+        1, 2, 3, 4, 5, 5,
+
+        5, 5, 5, 4, 3, 2,
+
+        1, 0, 0, 0, 0, 0
+
+    ];
+
+
+    const tariffs = [
+
+        8, 8, 8, 8, 8, 8,
+
+        8, 8, 8, 8, 8, 8,
+
+        10, 10, 10, 10,
+
+        12, 12, 15, 15, 15, 12, 10, 8
+
+    ];
+
+
+    return Array.from(
+        { length: 24 },
+        (_, hour) => ({
+
+            hour: hour,
+
+            demand_kwh: 5,
+
+            solar_kwh: solar[hour],
+
+            tariff_bdt_per_kwh:
+                tariffs[hour]
+
+        })
+    );
+
+}
+
+
+async function optimizeEnergy() {
+
+    const button =
+        document.getElementById("optimizeBtn");
+
+    const errorBox =
+        document.getElementById("errorBox");
+
+
+    errorBox.style.display = "none";
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "Optimizing...";
+
+
+    const payload = {
+
+        scenario_id:
+            document.getElementById("scenario").value,
+
+
+        operator_notes: [
+
+            document.getElementById("note").value
+
+        ],
+
+
+        hours: createHours(),
+
+
+        battery: {
+
+            capacity_kwh: 10,
+
+            initial_energy_kwh: 5,
+
+            minimum_energy_kwh: 2,
+
+            max_charge_kwh_per_hour: 3,
+
+            max_discharge_kwh_per_hour: 3
+
+        }
+
+    };
+
+
+    try {
+
+        const response =
+            await fetch(
+                API_URL,
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Accept":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify(payload)
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+
+                data.detail ||
+                "Optimization failed."
+
+            );
+
+        }
+
+
+        document.getElementById(
+            "totalGrid"
+        ).textContent =
+            data.total_grid_kwh;
+
+
+        document.getElementById(
+            "totalCost"
+        ).textContent =
+            data.total_cost_bdt;
+
+
+        document.getElementById(
+            "peakGrid"
+        ).textContent =
+            data.peak_grid_kwh;
+
+
+        const directive =
+            data.directive_interpretation?.[0];
+
+
+        if (directive) {
+
+            document.getElementById(
+                "directiveText"
+            ).textContent =
+
+                directive.explanation ||
+
+                `${directive.directive_type} detected`;
+
+        }
+
+
+        renderPlan(
+            data.hourly_plan
+        );
+
+
+        drawEnergyChart(
+            data.hourly_plan
+        );
+
+
+    } catch (error) {
+
+        errorBox.textContent =
+            "Error: " + error.message;
+
+        errorBox.style.display =
+            "block";
+
+    } finally {
+
+        button.disabled = false;
+
+        button.textContent =
+            "Optimize Energy Schedule";
+
+    }
+
+}
+
+
+function renderPlan(plan) {
+
+    const body =
+        document.getElementById(
+            "planBody"
+        );
+
+
+    body.innerHTML = "";
+
+
+    plan.forEach(row => {
+
+        const tr =
+            document.createElement("tr");
+
+
+        let actionClass =
+            "idle";
+
+
+        if (
+            row.battery_action ===
+            "charge"
+        ) {
+
+            actionClass =
+                "charge";
+
+        }
+
+
+        if (
+            row.battery_action ===
+            "discharge"
+        ) {
+
+            actionClass =
+                "discharge";
+
+        }
+
+
+        tr.innerHTML = `
+
+            <td>
+                ${row.hour}:00
+            </td>
+
+            <td>
+                ${row.grid_kwh}
+            </td>
+
+            <td>
+                ${row.solar_used_kwh}
+            </td>
+
+            <td class="${actionClass}">
+                ${row.battery_action}
+            </td>
+
+            <td>
+                ${row.battery_kwh}
+            </td>
+
+            <td>
+                ${row.battery_energy_after_kwh}
+            </td>
+
+            <td>
+                ${row.hourly_cost_bdt} BDT
+            </td>
+
+        `;
+
+
+        body.appendChild(tr);
+
+    });
+
+}
+
+
+function drawEnergyChart(plan) {
+
+    const canvas =
+        document.getElementById(
+            "energyChart"
+        );
+
+
+    const ctx =
+        canvas.getContext("2d");
+
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+
+    const dpr =
+        window.devicePixelRatio || 1;
+
+
+    canvas.width =
+        rect.width * dpr;
+
+
+    canvas.height =
+        rect.height * dpr;
+
+
+    ctx.scale(dpr, dpr);
+
+
+    const width =
+        rect.width;
+
+
+    const height =
+        rect.height;
+
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    if (!plan || plan.length === 0) {
+
+        return;
+
+    }
+
+
+    const paddingLeft = 45;
+
+    const paddingRight = 15;
+
+    const paddingTop = 20;
+
+    const paddingBottom = 35;
+
+
+    const chartWidth =
+        width -
+        paddingLeft -
+        paddingRight;
+
+
+    const chartHeight =
+        height -
+        paddingTop -
+        paddingBottom;
+
+
+    const gridValues =
+        plan.map(
+            row => Number(row.grid_kwh) || 0
+        );
+
+
+    const solarValues =
+        plan.map(
+            row => Number(row.solar_used_kwh) || 0
+        );
+
+
+    const batteryValues =
+        plan.map(
+            row => Number(row.battery_kwh) || 0
+        );
+
+
+    const maxValue =
+        Math.max(
+            ...gridValues,
+            ...solarValues,
+            ...batteryValues,
+            5
+        );
+
+
+    const yMax =
+        Math.ceil(
+            maxValue / 2
+        ) * 2;
+
+
+    function xPosition(index) {
+
+        return (
+            paddingLeft +
+            (index /
+                (plan.length - 1)) *
+            chartWidth
+        );
+
+    }
+
+
+    function yPosition(value) {
+
+        return (
+            paddingTop +
+            chartHeight -
+            (value / yMax) *
+            chartHeight
+        );
+
+    }
+
+
+    // Grid lines
+
+    ctx.lineWidth = 1;
+
+    ctx.strokeStyle = "#e8eeeb";
+
+    ctx.fillStyle = "#74807c";
+
+    ctx.font = "11px Arial";
+
+
+    for (
+        let value = 0;
+        value <= yMax;
+        value += 2
+    ) {
+
+        const y =
+            yPosition(value);
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            paddingLeft,
+            y
+        );
+
+        ctx.lineTo(
+            width - paddingRight,
+            y
+        );
+
+        ctx.stroke();
+
+
+        ctx.textAlign =
+            "right";
+
+
+        ctx.fillText(
+            value,
+            paddingLeft - 8,
+            y + 4
+        );
+
+    }
+
+
+    // X-axis labels
+
+    ctx.textAlign =
+        "center";
+
+
+    plan.forEach(
+        (row, index) => {
+
+            if (
+                index % 3 !== 0 &&
+                index !== 23
+            ) {
+
+                return;
+
+            }
+
+
+            const x =
+                xPosition(index);
+
+
+            ctx.fillStyle =
+                "#74807c";
+
+
+            ctx.fillText(
+                `${row.hour}:00`,
+                x,
+                height - 12
+            );
+
+        }
+    );
+
+
+    function drawLine(
+        values,
+        lineColor
+    ) {
+
+        ctx.beginPath();
+
+        values.forEach(
+            (value, index) => {
+
+                const x =
+                    xPosition(index);
+
+                const y =
+                    yPosition(value);
+
+
+                if (index === 0) {
+
+                    ctx.moveTo(
+                        x,
+                        y
+                    );
+
+                } else {
+
+                    ctx.lineTo(
+                        x,
+                        y
+                    );
+
+                }
+
+            }
+        );
+
+
+        ctx.strokeStyle =
+            lineColor;
+
+        ctx.lineWidth = 3;
+
+        ctx.lineJoin =
+            "round";
+
+        ctx.lineCap =
+            "round";
+
+        ctx.stroke();
+
+
+        // Points
+
+        values.forEach(
+            (value, index) => {
+
+                const x =
+                    xPosition(index);
+
+                const y =
+                    yPosition(value);
+
+
+                ctx.beginPath();
+
+                ctx.arc(
+                    x,
+                    y,
+                    3,
+                    0,
+                    Math.PI * 2
+                );
+
+
+                ctx.fillStyle =
+                    lineColor;
+
+                ctx.fill();
+
+            }
+        );
+
+    }
+
+
+    drawLine(
+        gridValues,
+        "#173f35"
+    );
+
+
+    drawLine(
+        solarValues,
+        "#d49a28"
+    );
+
+
+    drawLine(
+        batteryValues,
+        "#b05b48"
+    );
+
+}
+
+
+window.addEventListener(
+    "resize",
+    () => {
+
+        const canvas =
+            document.getElementById(
+                "energyChart"
+            );
+
+
+        if (
+            canvas &&
+            window.lastEnergyPlan
+        ) {
+
+            drawEnergyChart(
+                window.lastEnergyPlan
+            );
+
+        }
+
+    }
+);
+
+
+const originalRenderPlan =
+    renderPlan;
+
+
+renderPlan = function(plan) {
+
+    window.lastEnergyPlan =
+        plan;
+
+    originalRenderPlan(plan);
+
+};
+
+
+</script>
+
+</body>
+</html>
